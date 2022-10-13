@@ -1,13 +1,16 @@
-[submodule "HiCT_WebUI"]
-	path = HiCT_WebUI
-	url = https://github.com/ctlab/HiCT_WebUI
-[submodule "HiCT_Utils"]
-	path = HiCT_Utils
-	url = https://github.com/ctlab/HiCT_Utils
-[submodule "HiCT_library"]
-	path = HiCT_library
-	url = https://github.com/ctlab/HiCT_library
+[submodule "HiCT_Library"]
+	path = HiCT_Library
+	url = git@github.com:ctlab/HiCT_Library.git
+	branch = master
 [submodule "HiCT_Server"]
 	path = HiCT_Server
-	url = https://github.com/ctlab/HiCT_Server
+	url = git@github.com:ctlab/HiCT_Server.git
+	branch = master
+[submodule "HiCT_WebUI"]
+	path = HiCT_WebUI
+	url = git@github.com:ctlab/HiCT_WebUI.git
+	branch = master
+[submodule "HiCT_Utils"]
+	path = HiCT_Utils
+	url = git@github.com:ctlab/HiCT_Utils.git
 	branch = master

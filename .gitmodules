@@ -10,3 +10,4 @@
 [submodule "HiCT_Server"]
 	path = HiCT_Server
 	url = https://github.com/ctlab/HiCT_Server
+	branch = master

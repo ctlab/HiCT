@@ -38,7 +38,7 @@ If it fails due to unresolved
 On a Windows (native, not WSL/WSL2) the workflow is different, though. Firstly, the venv activation script is located in `hict_venv/Scripts/Activate.ps1` (for Powershell) or `hict_venv/Scripts/activate.bat` (for Command Prompt). Secondly, you will probably encounter a problem during installation of `cooler`, because it uses `pypairix` which is not available on Windows. However, the [solution from cooler's issue](https://github.com/open2c/cooler/issues/224#issuecomment-700403146) should work fine:
 ```
 pip install --no-deps cooler
-pip install simplejson pyfaidx multiprocessing
+pip install simplejson pyfaidx
 ```
 This should resolve failed dependencies.
 

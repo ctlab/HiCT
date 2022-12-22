@@ -12,8 +12,13 @@ on:
 
 jobs:
   run_pytest:
+    name: HiCT Library autotests
     continue-on-error: true
     runs-on: [ "ubuntu-latest" ]
+    
+    defaults:
+      run:
+        working-directory: ./HiCT_Library
 
     steps:
     - name: Checkout sources
@@ -33,18 +38,19 @@ jobs:
         check-latest: true
         # Set this option if you want the action to update environment variables.
         update-environment: true
-        cache-dependency-path: |
-          **/*requirements*.txt
     - name: Install dependencies
-      run: pip install -r **/*requirements*.txt
+      run: pip install -r requirements.txt
     - name: Launch PyTest
-      run: pytest .
-      continue-on-error: true
-
+      run: pytest -v .
 
   build_hict_library:
+    name: Build HiCT Library wheel
     continue-on-error: true
     runs-on: [ "ubuntu-latest" ]
+    
+    defaults:
+      run:
+        working-directory: ./HiCT_Library
 
     steps:
     - name: Checkout sources
@@ -67,9 +73,9 @@ jobs:
         cache-dependency-path: |
           **/*requirements*.txt
     - name: Install dependencies
-      run: pip install -r **/*requirements*.txt
+      run: pip install -r requirements.txt
     - name: Build HiCT_Library wheel
-      run: cd HiCT_Library && python setup.py bdist_wheel
+      run: python setup.py bdist_wheel
     - name: Upload wheel artifact
       uses: actions/upload-artifact@v3
       with:
@@ -77,11 +83,26 @@ jobs:
         path: |
           **/dist/*.whl  
   
-  build_hict_server:
-    runs-on: [ "ubuntu-latest" ]
+  build_hict_tools:
+    name: Build HiCT-based python tools (${{ matrix.tool_name }})
     needs: [ "build_hict_library" ]
     continue-on-error: true
+    
+    strategy:
+      matrix:
+        os: [ "ubuntu-latest" ]
+        include:
+          - tool_name: "HiCT Server"
+            tool_submodule: "HiCT_Server"
+          - tool_name: "HiCT Utils"
+            tool_submodule: "HiCT_Utils"
 
+    runs-on: ${{ matrix.os }}
+    
+    defaults:
+      run:
+        working-directory: ./${{ matrix.tool_submodule }}
+    
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
@@ -100,66 +121,28 @@ jobs:
         check-latest: true
         # Set this option if you want the action to update environment variables.
         update-environment: true
-        cache-dependency-path: |
-          **/*requirements*.txt
     - name: Load built HiCT_Library
       uses: actions/download-artifact@v3
       with:
         name: hict_library_wheel
-    - name: Install HiCT_Library
-      run: pip install **/*.whl
+    - name: Install previously built HiCT library
+      run: pip install *.whl && rm -rf *.whl
     - name: Install other dependencies
-      run: pip install -r HiCT_Server/*requirements*.txt
+      run: |
+        cd "${{ matrix.tool_submodule }}"
+        pip install -r requirements.txt
+      continue-on-error: true
     - name: Build HiCT_Server wheel
-      run: cd HiCT_Server && python setup.py bdist_wheel
+      run: |
+        cd "${{ matrix.tool_submodule }}"
+        python setup.py bdist_wheel
     - name: Upload wheel artifact
       uses: actions/upload-artifact@v3
       with:
-        name: hict_server_wheel
+        name: "${{ matrix.tool_submodule }}"
         path: |
-          **/dist/*.whl  
-            
-  build_hict_utils:
-    runs-on: [ "ubuntu-latest" ]
-    needs: [ "build_hict_library" ]
-    continue-on-error: true
+          ./"${{ matrix.tool_submodule }}"/**/dist/*.whl
 
-    steps:
-    - name: Checkout sources
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    - name: Setup Python
-      uses: actions/setup-python@v4.3.1
-      with:
-        # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
-        python-version: '>= 3.10'
-        # Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry.
-        cache: pip
-        # The target architecture (x86, x64) of the Python or PyPy interpreter.
-        architecture: x64
-        # Set this option if you want the action to check for the latest available version that satisfies the version spec.
-        check-latest: true
-        # Set this option if you want the action to update environment variables.
-        update-environment: true
-        cache-dependency-path: |
-          **/*requirements*.txt
-    - name: Load built HiCT_Library
-      uses: actions/download-artifact@v3
-      with:
-        name: hict_library_wheel
-    - name: Install HiCT_Library
-      run: pip install **/*.whl
-    - name: Install other dependencies
-      run: pip install -r HiCT_Utils/*requirements*.txt
-    - name: Build HiCT_Utils wheel
-      run: cd HiCT_Utils && python setup.py bdist_wheel
-    - name: Upload wheel artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: hict_utils_wheel
-        path: |
-          **/dist/*.whl
     
     
   build_web_ui:
@@ -205,7 +188,7 @@ jobs:
 
   release:
     runs-on: "ubuntu-latest"
-    needs: [ "build_hict_library", "build_hict_server", "build_hict_utils", "build_web_ui" ]
+    needs: [ "build_hict_library", "build_hict_tools", "build_web_ui" ]
     steps:
       - name: Download linux release
         uses: actions/download-artifact@v3

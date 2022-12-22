@@ -80,8 +80,6 @@ jobs:
       run: pip install -r requirements.txt
     - name: Build HiCT_Library wheel
       run: python setup.py bdist_wheel
-    - name: List files
-      run: ls -alRh
     - name: Upload wheel artifact
       uses: actions/upload-artifact@v3
       with:
@@ -105,14 +103,10 @@ jobs:
     runs-on: [ "ubuntu-latest" ]
     
     steps:
-    - name: List files after downloading wheel
-      run: ls -alRh
     - name: Checkout sources
       uses: actions/checkout@v3
       with:
         submodules: recursive
-    - name: List files after checking sources
-      run: ls -alRh
     - name: Setup Python
       uses: actions/setup-python@v4.3.1
       with:
@@ -137,7 +131,9 @@ jobs:
         name: hict_library_wheel
         path: ./artifacts/
     - name: Install previously built HiCT library
-      run: find ./artifacts/ -type f -name "*.whl" -print0 | xargs -0 pip install && rm -rf ./artifacts
+      run: |
+        find ./artifacts/ -type f -name "*.whl" -print0 | xargs -0 pip install
+        rm -rf ./artifacts
     - name: Install ${{ matrix.tool_name }} dependencies
       run: |
         cd "${{ matrix.tool_submodule }}"
@@ -179,9 +175,14 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: cd HiCT_WebUI; npm install
+        run: |
+          cd HiCT_WebUI
+          npm install
       - name: Build electron app (linux)
-        run: export GH_TOKEN=${{ secrets.GITHUB_TOKEN }} && cd HiCT_WebUI && npm run ${{ matrix.npm-task }}
+        run: |
+          export GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          cd HiCT_WebUI
+          npm run ${{ matrix.npm-task }}
         if: runner.os == 'Linux'
       - name: Build electron app (windows)
         run: powershell "[Environment]::SetEnvironmentVariable('GH_TOKEN','${{ secrets.GITHUB_TOKEN }}','User'); cd HiCT_WebUI; npm run ${{ matrix.npm-task }}"
@@ -225,8 +226,6 @@ jobs:
         continue-on-error: true
         with:
           name: HiCT_Utils_wheel
-      - name: List available files
-        run: ls -alRh
       - name: Generate latest release
         uses: marvinpinto/action-automatic-releases@latest
         with:

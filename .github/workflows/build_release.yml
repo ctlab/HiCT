@@ -109,6 +109,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: hict_library_wheel
+        path: ./artifacts/
     - name: List files after downloading wheel
       run: ls -alRh
     - name: Checkout sources
@@ -136,7 +137,7 @@ jobs:
         cd "${{ matrix.tool_submodule }}"
         pip install -r requirements-dev.txt
     - name: Install previously built HiCT library
-      run: pip install *.whl && rm -rf *.whl
+      run: pip install artifacts/**/*.whl && rm -rf artifacts
     - name: Install ${{ matrix.tool_name }} dependencies
       run: |
         cd "${{ matrix.tool_submodule }}"

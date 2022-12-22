@@ -151,7 +151,7 @@ jobs:
       with:
         name: "${{ matrix.tool_submodule }}_wheel"
         path: |
-          ./"${{ matrix.tool_submodule }}"/**/dist/*.whl
+          ./${{ matrix.tool_submodule }}/**/dist/*.whl
 
     
     

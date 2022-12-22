@@ -40,8 +40,8 @@ jobs:
           **/*requirements*.txt
     - name: Install dependencies
       run: |
+	pip install -r requirements-dev.txt || true
         pip install -r requirements.txt
-        pip install -r requirements-dev.txt || true
     - name: Launch PyTest
       run: pytest -v .
 
@@ -74,8 +74,8 @@ jobs:
           **/*requirements*.txt
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
         pip install -r requirements-dev.txt || true
+        pip install -r requirements.txt
     - name: Build HiCT_Library wheel
       run: python setup.py bdist_wheel
     - name: Upload wheel artifact
@@ -106,10 +106,16 @@ jobs:
         working-directory: ./${{ matrix.tool_submodule }}
     
     steps:
+    - name: Load built HiCT_Library
+      uses: actions/download-artifact@v3
+      with:
+        name: hict_library_wheel
     - name: Checkout sources
       uses: actions/checkout@v3
       with:
         submodules: recursive
+    - name: List files
+      run: ls -alRh
     - name: Setup Python
       uses: actions/setup-python@v4.3.1
       with:
@@ -123,13 +129,13 @@ jobs:
         update-environment: true
         cache-dependency-path: |
           **/*requirements*.txt
-    - name: Load built HiCT_Library
-      uses: actions/download-artifact@v3
-      with:
-        name: hict_library_wheel
+    - name: Install build dependencies
+      run: |
+        cd "${{ matrix.tool_submodule }}"
+        pip install -r requirements-dev.txt || true
     - name: Install previously built HiCT library
       run: pip install *.whl && rm -rf *.whl
-    - name: Install other dependencies
+    - name: Install main dependencies
       run: |
         cd "${{ matrix.tool_submodule }}"
         pip install -r requirements.txt

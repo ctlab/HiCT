@@ -112,6 +112,10 @@ jobs:
         path: ./artifacts/
     - name: List files after downloading wheel
       run: ls -alRh
+    - name: Move all wheels to wheelhouse
+      run: find ./artifacts/ -type f -print0 | xargs -0 mv -t ./artifacts
+    - name: List files after wheelhouse management
+      run: ls -alRh
     - name: Checkout sources
       uses: actions/checkout@v3
       with:

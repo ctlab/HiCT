@@ -191,9 +191,9 @@ jobs:
         with:
           name: hict_trunk_build_${{ matrix.artifact-name }}
           path: |
-            release/*/*.AppImage
-            release/*/*.zip
-            release/*/*.exe
+            release/**/*.AppImage
+            release/**/*.zip
+            release/**/*.exe
             !release/**/*.yml
 
   release:
@@ -219,14 +219,14 @@ jobs:
         uses: actions/download-artifact@v3
         continue-on-error: true
         with:
-          name: hict_server_wheel
+          name: HiCT_Server_wheel
       - name: Download HiCT_Utils release
         uses: actions/download-artifact@v3
         continue-on-error: true
         with:
-          name: hict_utils_wheel
+          name: HiCT_Utils_wheel
       - name: List available files
-        run: ls -alR
+        run: ls -alRh
       - name: Generate latest release
         uses: marvinpinto/action-automatic-releases@latest
         with:

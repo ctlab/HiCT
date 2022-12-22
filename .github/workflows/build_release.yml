@@ -41,7 +41,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+        pip install -r requirements-dev.txt || true
     - name: Launch PyTest
       run: pytest -v .
 
@@ -73,7 +73,9 @@ jobs:
         cache-dependency-path: |
           **/*requirements*.txt
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: |
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt || true
     - name: Build HiCT_Library wheel
       run: python setup.py bdist_wheel
     - name: Upload wheel artifact
@@ -131,6 +133,7 @@ jobs:
       run: |
         cd "${{ matrix.tool_submodule }}"
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt || true
       continue-on-error: true
     - name: Build HiCT_Server wheel
       run: |

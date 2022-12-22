@@ -141,7 +141,7 @@ jobs:
         cd "${{ matrix.tool_submodule }}"
         pip install -r requirements-dev.txt
     - name: Install previously built HiCT library
-      run: pip install artifacts/**/*.whl && rm -rf artifacts
+      run: find ./artifacts/ -type f -name "*.whl" -print0 | xargs -0 pip install && rm -rf ./artifacts
     - name: Install ${{ matrix.tool_name }} dependencies
       run: |
         cd "${{ matrix.tool_submodule }}"

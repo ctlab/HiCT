@@ -29,17 +29,19 @@ jobs:
       uses: actions/setup-python@v4.3.1
       with:
         # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
-        python-version: '>= 3.10'
+        python-version: '>=3.9 <3.11'
         # Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry.
         cache: pip
         # The target architecture (x86, x64) of the Python or PyPy interpreter.
         architecture: x64
-        # Set this option if you want the action to check for the latest available version that satisfies the version spec.
-        check-latest: true
         # Set this option if you want the action to update environment variables.
         update-environment: true
+        cache-dependency-path: |
+          **/*requirements*.txt
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: |
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
     - name: Launch PyTest
       run: pytest -v .
 
@@ -61,13 +63,11 @@ jobs:
       uses: actions/setup-python@v4.3.1
       with:
         # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
-        python-version: '>= 3.10'
+        python-version: '>=3.9 <3.11'
         # Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry.
         cache: pip
         # The target architecture (x86, x64) of the Python or PyPy interpreter.
         architecture: x64
-        # Set this option if you want the action to check for the latest available version that satisfies the version spec.
-        check-latest: true
         # Set this option if you want the action to update environment variables.
         update-environment: true
         cache-dependency-path: |
@@ -112,15 +112,15 @@ jobs:
       uses: actions/setup-python@v4.3.1
       with:
         # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
-        python-version: '>= 3.10'
+        python-version: '>=3.9 <3.11'
         # Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry.
         cache: pip
         # The target architecture (x86, x64) of the Python or PyPy interpreter.
         architecture: x64
-        # Set this option if you want the action to check for the latest available version that satisfies the version spec.
-        check-latest: true
         # Set this option if you want the action to update environment variables.
         update-environment: true
+        cache-dependency-path: |
+          **/*requirements*.txt
     - name: Load built HiCT_Library
       uses: actions/download-artifact@v3
       with:

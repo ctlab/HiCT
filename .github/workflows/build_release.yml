@@ -178,18 +178,20 @@ jobs:
 
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Setup Node.js
         uses: actions/setup-node@master
         with:
           node-version: 16
       - name: Install dependencies
-        run: npm install
+        run: cd HiCT_WebUI; npm install
       - name: Build electron app (linux)
-        run: export GH_TOKEN=${{ secrets.GITHUB_TOKEN }} && npm run ${{ matrix.npm-task }}
+        run: export GH_TOKEN=${{ secrets.GITHUB_TOKEN }} && cd HiCT_WebUI && npm run ${{ matrix.npm-task }}
         if: runner.os == 'Linux'
       - name: Build electron app (windows)
-        run: powershell "[Environment]::SetEnvironmentVariable('GH_TOKEN','${{ secrets.GITHUB_TOKEN }}','User'); npm run ${{ matrix.npm-task }}"
+        run: powershell "[Environment]::SetEnvironmentVariable('GH_TOKEN','${{ secrets.GITHUB_TOKEN }}','User'); cd HiCT_WebUI; npm run ${{ matrix.npm-task }}"
         if: runner.os == 'Windows'
       - name: Publish build artifacts
         uses: actions/upload-artifact@v3

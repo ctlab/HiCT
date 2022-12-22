@@ -87,7 +87,7 @@ jobs:
       with:
         name: hict_library_wheel
         path: |
-          **/dist/*.whl  
+          **/dist/**/*.whl  
   
   build_hict_tools:
     name: Build HiCT-based python tools (${{ matrix.tool_name }})
@@ -151,7 +151,7 @@ jobs:
       with:
         name: "${{ matrix.tool_submodule }}_wheel"
         path: |
-          ./${{ matrix.tool_submodule }}/**/dist/*.whl
+          ./${{ matrix.tool_submodule }}/**/dist/**/*.whl
 
     
     

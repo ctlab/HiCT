@@ -105,11 +105,6 @@ jobs:
     runs-on: [ "ubuntu-latest" ]
     
     steps:
-    - name: Load built HiCT_Library
-      uses: actions/download-artifact@v3
-      with:
-        name: hict_library_wheel
-        path: ./artifacts/
     - name: List files after downloading wheel
       run: ls -alRh
     - name: Checkout sources
@@ -136,6 +131,11 @@ jobs:
       run: |
         cd "${{ matrix.tool_submodule }}"
         pip install -r requirements-dev.txt
+    - name: Load built HiCT_Library
+      uses: actions/download-artifact@v3
+      with:
+        name: hict_library_wheel
+        path: ./artifacts/
     - name: Install previously built HiCT library
       run: find ./artifacts/ -type f -name "*.whl" -print0 | xargs -0 pip install && rm -rf ./artifacts
     - name: Install ${{ matrix.tool_name }} dependencies

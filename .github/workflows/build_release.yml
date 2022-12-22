@@ -191,10 +191,10 @@ jobs:
         with:
           name: hict_trunk_build_${{ matrix.artifact-name }}
           path: |
-            release/**/*.AppImage
-            release/**/*.zip
-            release/**/*.exe
-            !release/**/*.yml
+            **/release/**/*.AppImage
+            **/release/**/*.zip
+            **/release/**/*.exe
+            !**/*.yml
 
   release:
     runs-on: "ubuntu-latest"

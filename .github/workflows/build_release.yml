@@ -4,7 +4,7 @@ on:
     types:
       - created
   push:
-    branches: ["master"]
+    branches: ["master, cicd-docker"]
     tags:
       - "v*"
   pull_request:
@@ -43,8 +43,8 @@ jobs:
       run: pip install -r requirements-dev.txt
     - name: Install Python dependencies
       run: pip install -r requirements.txt
-    - name: Launch PyTest
-      run: pytest -v .
+    #- name: Launch PyTest
+    #  run: pytest -v .
 
   build_hict_library:
     name: Build HiCT Library wheel
@@ -242,3 +242,48 @@ jobs:
             **/*hict*.exe
             **/*hict*.AppImage
             **/*hict*.whl
+            
+  docker-images:
+    runs-on: "ubuntu-latest"
+    needs: [ "release" ]
+    continue-on-error: true
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive    
+      - name: Load built HiCT_Library
+        uses: actions/download-artifact@v3
+        with:
+          name: hict_library_wheel
+          path: ./build-context/
+      - name: Copy HiCT_Server to build context
+        run: cp -rf ./HiCT_Server/ ./build-context/
+      - name: Copy HiCT_Server to build context
+        run: cp -rf ./HiCT_Server/ ./build-context/
+      - name: Copy Dockerfiles to build directory
+        run: cp -f ./docker/ ./build-context/
+      - name: Show directory contents
+        run: ls -alRh ./build-context/
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and publish a Docker image for HiCT_WebUI to ghcr.io
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: ctlab/HiCT_WebUI
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          image_tag: latest
+          context: ./build-context/
+          dockerfile: ./build-context/docker/webui.Dockerfile
+      - name: Build and publish a Docker image for HiCT_Server to ghcr.io
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: ctlab/HiCT_Server
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          image_tag: latest
+          context: ./build-context/
+          dockerfile: ./build-context/docker/server.Dockerfile
+

@@ -281,7 +281,7 @@ jobs:
       - name: Build and publish a Docker image for HiCT_Server to ghcr.io
         uses: macbre/push-to-ghcr@master
         with:
-          image_name: ctlab/HiCT_Server
+          image_name: "${{ github.actor }}/hict-server"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           image_tag: latest
           context: ./build-context/
@@ -318,7 +318,7 @@ jobs:
       - name: Build and publish a Docker image for HiCT_WebUI to ghcr.io
         uses: macbre/push-to-ghcr@master
         with:
-          image_name: ctlab/HiCT_WebUI
+          image_name: "${{ github.actor }}/hict-webui"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           image_tag: latest
           context: ./build-context/

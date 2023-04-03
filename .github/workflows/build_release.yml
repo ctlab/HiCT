@@ -43,8 +43,8 @@ jobs:
       run: pip install -r requirements-dev.txt
     - name: Install Python dependencies
       run: pip install -r requirements.txt
-    #- name: Launch PyTest
-    #  run: pytest -v .
+    - name: Launch Tests
+      run: ./run_tests.sh
 
   build_hict_library:
     name: Build HiCT Library wheel
@@ -245,7 +245,7 @@ jobs:
             
   docker-images:
     runs-on: "ubuntu-latest"
-    needs: [ "release" ]
+    needs: [ "build_hict_library" ]
     continue-on-error: true
 
     steps:
@@ -263,7 +263,7 @@ jobs:
       - name: Copy HiCT_Server to build context
         run: cp -rf ./HiCT_Server/ ./build-context/
       - name: Copy Dockerfiles to build directory
-        run: cp -f ./docker/ ./build-context/
+        run: cp -rf ./docker/ ./build-context/
       - name: Show directory contents
         run: ls -alRh ./build-context/
       - name: Set up QEMU

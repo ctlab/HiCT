@@ -272,20 +272,37 @@ jobs:
         run: cp -rf ./docker/server.Dockerfile ./build-context/docker/server.Dockerfile
       - name: Show directory contents
         run: ls -alRh ./build-context/
-      - name: Log into registry
+      - name: Log into ghcr.io
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
       - name: Build and publish a Docker image for HiCT_Server to ghcr.io
         uses: macbre/push-to-ghcr@master
         with:
-          image_name: "${{ github.actor }}/hict-server"
+          image_name: "$ctlab/hict-server"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           image_tag: latest
           context: ./build-context/
           dockerfile: ./build-context/docker/server.Dockerfile
+        continue-on-error: true
+      - name: Log into DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_LOGIN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        continue-on-error: true
+      - name: Build and publish a Docker image for HiCT_Server to DockerHub
+        uses: docker/build-push-action@v4
+        with:
+            push: true
+            tags: "squirrelfolding/hict-webui:latest"
+            secrets: |
+              GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            context: ./build-context/
+            file: ./build-context/docker/server.Dockerfile
         continue-on-error: true
 
   docker-HiCT_WebUI:
@@ -309,17 +326,35 @@ jobs:
         run: cp -rf ./docker/webui.Dockerfile ./build-context/docker/webui.Dockerfile
       - name: Show directory contents
         run: ls -alRh ./build-context/
-      - name: Log into registry
+      - name: Log into ghcr.io
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
       - name: Build and publish a Docker image for HiCT_WebUI to ghcr.io
         uses: macbre/push-to-ghcr@master
         with:
-          image_name: "${{ github.actor }}/hict-webui"
+          image_name: "ctlab/hict-webui"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           image_tag: latest
           context: ./build-context/
           dockerfile: ./build-context/docker/webui.Dockerfile
+        continue-on-error: true
+      - name: Log into DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_LOGIN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        continue-on-error: true
+      - name: Build and publish a Docker image for HiCT_WebUI to DockerHub
+        uses: docker/build-push-action@v4
+        with:
+            push: true
+            tags: "squirrelfolding/hict-webui:latest"
+            secrets: |
+              GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            context: ./build-context/
+            file: ./build-context/docker/webui.Dockerfile
+        continue-on-error: true

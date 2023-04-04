@@ -460,7 +460,6 @@ jobs:
         continue-on-error: true
       - name: Build and publish a Docker image for HiCT_WebUI to ghcr.io
         uses: macbre/push-to-ghcr@master
-        if
         with:
           image_name: "ctlab/hict-full"
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -298,7 +298,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: "squirrelfolding/hict-webui:latest"
+            tags: "squirrelfolding/hict-server:latest"
             secrets: |
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/

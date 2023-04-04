@@ -156,7 +156,7 @@ jobs:
 
   build_hict_server:
     name: Build HiCT-based python tools (${{ matrix.tool_name }})
-    needs: [ "build_hict_tools" ]
+    needs: [ "build_hict_utils" ]
     continue-on-error: true
     
     strategy:
@@ -476,7 +476,7 @@ jobs:
         
   release:
     runs-on: "ubuntu-latest"
-    needs: [ "build_hict_library", "build_hict_tools", "build_web_ui", "docker-full" ]
+    needs: [ "build_hict_library", "build_hict_utils", "build_hict_server", "build_web_ui", "docker-full" ]
     steps:
       - name: Download linux release
         uses: actions/download-artifact@v3

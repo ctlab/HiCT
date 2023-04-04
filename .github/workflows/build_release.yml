@@ -4,7 +4,7 @@ on:
     types:
       - created
   push:
-    branches: ["master, cicd-docker"]
+    branches: ["master"]
   pull_request:
     branches: ["master", "dev*"]
 

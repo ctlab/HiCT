@@ -13,15 +13,17 @@ curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
 Assuming you now have Docker installed, launch this command in your terminal:
 ```
 docker run \
+  --mount type=bind,source=/path/to/the/data,target=/app/data \
   -p 8080:80/tcp \
   -p 5000:5000/tcp \
-  --mount type=bind,source=/path/to/the/data,target=/app/data \
+  --pull always \
   ghcr.io/ctlab/hict-full:latest
 ```
 
 * You have to change `/path/to/the/data` to actual absolute path where you store your Coolers, AGPs, FASTAs and `.hict.hdf5` files (you can store all these files in the subdirectories of that folder).
 * You can change port `8080` to any other, that's the port where your WebUI will be available from host (whereas `80` is the port inside docker container and should not be changed). 
 * Port `5000` is used for communications between WebUI and Server, you can change that but remember to set new port in WebUI (Connection Settings at the top of the page).
+* `--pull always` ensures that the latest version with `latest` tag is actually being launched (only difference will be pulled if it was changed slightly from version already present on your machine).
 
 After running this command, open your web browser and navigate to the `http://localhost:8080`, WebUI should open.
 

@@ -9,6 +9,7 @@ on:
     branches: ["master", "dev*"]
 
 jobs:
+
   run_pytest:
     name: HiCT Library autotests
     continue-on-error: true
@@ -313,7 +314,7 @@ jobs:
         with:
           image_name: "ctlab/hict-server"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          image_tag: latest
+          image_tag: ${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}
           context: ./build-context/
           dockerfile: ./build-context/docker/server.Dockerfile
         continue-on-error: true
@@ -327,7 +328,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: "squirrelfolding/hict-server:latest"
+            tags: "squirrelfolding/hict-server:${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}"
             secrets: |
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/
@@ -367,7 +368,7 @@ jobs:
         with:
           image_name: "ctlab/hict-webui"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          image_tag: latest
+          image_tag: ${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}
           context: ./build-context/
           dockerfile: ./build-context/docker/webui.Dockerfile
         continue-on-error: true
@@ -381,7 +382,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: "squirrelfolding/hict-webui:latest"
+            tags: "squirrelfolding/hict-webui:${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}"
             secrets: |
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/
@@ -402,6 +403,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
+        id: extract_branch
       - name: Setup Node.js
         uses: actions/setup-node@master
         with:
@@ -455,10 +460,11 @@ jobs:
         continue-on-error: true
       - name: Build and publish a Docker image for HiCT_WebUI to ghcr.io
         uses: macbre/push-to-ghcr@master
+        if
         with:
           image_name: "ctlab/hict-full"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          image_tag: latest
+          image_tag: ${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}
           context: ./build-context/
           dockerfile: ./build-context/docker/full.Dockerfile
         continue-on-error: true
@@ -472,7 +478,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: "squirrelfolding/hict-full:latest"
+            tags: "squirrelfolding/hict-full:${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}"
             secrets: |
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/

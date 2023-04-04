@@ -13,7 +13,7 @@ RUN unset UWSGI_CHEAPER
 RUN unset UWSGI_PROCESSES
 RUN export UWSGI_PROCESSES=1
 RUN python -m compileall -o 2 -r 3 -f -e . 
-RUN pip install --upgrade --no-cache-dir .
+# RUN pip install --upgrade --no-cache-dir .
 EXPOSE 5000 8080
 ENV STATIC_INDEX=1
 RUN rm -f /etc/nginx/conf.d/nginx.conf

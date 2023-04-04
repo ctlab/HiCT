@@ -10,30 +10,6 @@ on:
 
 jobs:
 
-  extract_branch_name:
-    runs-on: "ubuntu-latest"
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      - name: Get branch name
-        id: branch-name
-        uses: tj-actions/branch-names@v6
-      - name: Running on the default branch.
-        if: steps.branch-name.outputs.is_default == 'true'
-        run: |
-          echo "Running on default: ${{ steps.branch-name.outputs.current_branch }}"
-        # Outputs: "Running on default: main".
-      - name: Running on a pull request branch.
-        if: steps.branch-name.outputs.is_default == 'false'
-        run: |
-          echo "Running on pr: ${{ steps.branch-name.outputs.current_branch }}"
-        # Outputs: "Running on pr: feature/test".
-
   run_pytest:
     name: HiCT Library autotests
     continue-on-error: true
@@ -311,12 +287,8 @@ jobs:
         with:
           submodules: recursive   
       - name: Extract branch name
-        shell: bash
-        run: |
-          BRANCHNAME=$(git branch --show-current | sed 's/.*\///')
-          echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
-          echo "Branch name is ${BRANCHNAME}"
-        id: extract_branch 
+        id: branch-name
+        uses: tj-actions/branch-names@v6
       - name: Load built HiCT_Library
         uses: actions/download-artifact@v3
         with:
@@ -345,7 +317,7 @@ jobs:
         with:
           image_name: "ctlab/hict-server"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          image_tag: ${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}
+          image_tag: ${{ (steps.branch-name.outputs.current_branch == 'master') && 'latest' || steps.branch-name.outputs.current_branch }}
           context: ./build-context/
           dockerfile: ./build-context/docker/server.Dockerfile
         continue-on-error: true
@@ -359,7 +331,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: "squirrelfolding/hict-server:${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}"
+            tags: "squirrelfolding/hict-server:${{ (steps.branch-name.outputs.current_branch == 'master') && 'latest' || steps.branch-name.outputs.current_branch }}"
             secrets: |
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/
@@ -379,12 +351,8 @@ jobs:
         with:
           submodules: recursive
       - name: Extract branch name
-        shell: bash
-        run: |
-          BRANCHNAME=$(git branch --show-current | sed 's/.*\///')
-          echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
-          echo "Branch name is ${BRANCHNAME}"
-        id: extract_branch
+        id: branch-name
+        uses: tj-actions/branch-names@v6
       - name: Create directory for build context
         run: mkdir -p ./build-context/docker/
         continue-on-error: true
@@ -406,7 +374,7 @@ jobs:
         with:
           image_name: "ctlab/hict-webui"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          image_tag: ${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}
+          image_tag: ${{ (steps.branch-name.outputs.current_branch == 'master') && 'latest' || steps.branch-name.outputs.current_branch }}
           context: ./build-context/
           dockerfile: ./build-context/docker/webui.Dockerfile
         continue-on-error: true
@@ -420,7 +388,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: "squirrelfolding/hict-webui:${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}"
+            tags: "squirrelfolding/hict-webui:${{ (steps.branch-name.outputs.current_branch == 'master') && 'latest' || steps.branch-name.outputs.current_branch }}"
             secrets: |
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/
@@ -442,12 +410,8 @@ jobs:
         with:
           submodules: recursive
       - name: Extract branch name
-        shell: bash
-        run: |
-          BRANCHNAME=$(git branch --show-current | sed 's/.*\///')
-          echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
-          echo "Branch name is ${BRANCHNAME}"
-        id: extract_branch
+        id: branch-name
+        uses: tj-actions/branch-names@v6
       - name: Setup Node.js
         uses: actions/setup-node@master
         with:
@@ -504,7 +468,7 @@ jobs:
         with:
           image_name: "ctlab/hict-full"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          image_tag: ${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}
+          image_tag: ${{ (steps.branch-name.outputs.current_branch == 'master') && 'latest' || steps.branch-name.outputs.current_branch }}
           context: ./build-context/
           dockerfile: ./build-context/docker/full.Dockerfile
         continue-on-error: true
@@ -518,7 +482,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
             push: true
-            tags: "squirrelfolding/hict-full:${{ (steps.extract_branch.outputs.branch == 'master') && 'latest' || steps.extract_branch.outputs.branch }}"
+            tags: "squirrelfolding/hict-full:${{ (steps.branch-name.outputs.current_branch == 'master') && 'latest' || steps.branch-name.outputs.current_branch }}"
             secrets: |
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/

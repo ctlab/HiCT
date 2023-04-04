@@ -199,7 +199,7 @@ jobs:
 
   release:
     runs-on: "ubuntu-latest"
-    needs: [ "build_hict_library", "build_hict_tools", "build_web_ui" ]
+    needs: [ "build_hict_library", "build_hict_tools", "build_web_ui", "docker-full" ]
     steps:
       - name: Download linux release
         uses: actions/download-artifact@v3
@@ -294,7 +294,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_LOGIN }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
         continue-on-error: true
-      - name: Build and publish a Docker image for HiCT_Server to DockerHub
+      - name: Build and publish a Docker image for HiCT_Server to DockerHub mirror
         uses: docker/build-push-action@v4
         with:
             push: true
@@ -348,7 +348,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_LOGIN }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
         continue-on-error: true
-      - name: Build and publish a Docker image for HiCT_WebUI to DockerHub
+      - name: Build and publish a Docker image for HiCT_WebUI to DockerHub mirror
         uses: docker/build-push-action@v4
         with:
             push: true
@@ -357,4 +357,73 @@ jobs:
               GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
             context: ./build-context/
             file: ./build-context/docker/webui.Dockerfile
+        continue-on-error: true
+
+
+  docker-full:
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Setup Node.js
+        uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - name: Build web app
+        run: |
+          cd HiCT_WebUI
+          npm install
+          npm run build
+          cd ..
+      - name: Create directory for build context
+        run: |
+          mkdir -p ./build-context/docker/
+          mkdir -p ./build-context/HiCT_WebUI/dist
+        continue-on-error: true
+      - name: Copy HiCT_WebUI to build context
+        run: cp -rf ./HiCT_WebUI/dist ./build-context/HiCT_WebUI/dist
+      - name: Copy Dockerfile to build directory
+        run: cp -rf ./docker/full.Dockerfile ./build-context/docker/full.Dockerfile
+      - name: Copy NGINX config
+        run: cp -rf ./docker/nginx.conf ./build-context/docker/nginx.conf
+      - name: Show directory contents
+        run: ls -alRh ./build-context/
+      - name: Log into ghcr.io
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      - name: Build and publish a Docker image for HiCT_WebUI to ghcr.io
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: "ctlab/hict-full"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          image_tag: latest
+          context: ./build-context/
+          dockerfile: ./build-context/docker/full.Dockerfile
+        continue-on-error: true
+      - name: Log into DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_LOGIN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        continue-on-error: true
+      - name: Build and publish a Docker image for HiCT_WebUI to DockerHub mirror
+        uses: docker/build-push-action@v4
+        with:
+            push: true
+            tags: "squirrelfolding/hict-full:latest"
+            secrets: |
+              GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            context: ./build-context/
+            file: ./build-context/docker/full.Dockerfile
         continue-on-error: true

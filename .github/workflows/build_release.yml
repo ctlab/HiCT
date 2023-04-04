@@ -440,16 +440,11 @@ jobs:
         with:
           name: HiCT_Utils_wheel
           path: ./build-context/
-      - name: Load built HiCT_Server
-        uses: actions/download-artifact@v3
-        with:
-          name: HiCT_Server_wheel
-          path: ./build-context/
       - name: Move all wheels to the build context directly
         run: find ./build-context/ -type f -name "*.whl" -print0 | xargs -0 mv -t ./build-context/dist/
         continue-on-error: true
-      # - name: Copy HiCT_Server to build context
-      #   run: cp -rf ./HiCT_Server/ ./build-context/
+      - name: Copy HiCT_Server to build context
+        run: cp -rf ./HiCT_Server/ ./build-context/
       - name: Copy Dockerfile to build directory
         run: cp -rf ./docker/full.Dockerfile ./build-context/docker/full.Dockerfile
       - name: Copy NGINX config

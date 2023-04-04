@@ -3,7 +3,7 @@ version: "3.9"
 services:
   HiCT_Server:
     container_name: HiCT_Server
-    image: squirrelfolding/hict-server:latest
+    image: ghcr.io/ctlab/hict-server:latest
     pull_policy: always
     restart: always
     ports:
@@ -15,7 +15,7 @@ services:
 
   HiCT_WebUI:
     container_name: HiCT_WebUI
-    image: squirrelfolding/hict-webui:latest
+    image: ghcr.io/ctlab/hict-webui:latest
     pull_policy: always
     restart: always
     ports:

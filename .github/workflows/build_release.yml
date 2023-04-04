@@ -23,7 +23,7 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: |
-          BRANCHNAME=$(git branch --show-current)
+          BRANCHNAME=$(git rev-parse --abbrev-ref HEAD)
           echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
           echo "Branch name is ${BRANCHNAME}"
           [! -z "${BRANCHNAME}"] || exit 1

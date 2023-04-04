@@ -20,14 +20,19 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Extract branch name
-        shell: bash
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v6
+      - name: Running on the default branch.
+        if: steps.branch-name.outputs.is_default == 'true'
         run: |
-          BRANCHNAME=$(git rev-parse --abbrev-ref HEAD)
-          echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
-          echo "Branch name is ${BRANCHNAME}"
-          [! -z "${BRANCHNAME}"] || exit 1
-        id: extract_branch
+          echo "Running on default: ${{ steps.branch-name.outputs.current_branch }}"
+        # Outputs: "Running on default: main".
+      - name: Running on a pull request branch.
+        if: steps.branch-name.outputs.is_default == 'false'
+        run: |
+          echo "Running on pr: ${{ steps.branch-name.outputs.current_branch }}"
+        # Outputs: "Running on pr: feature/test".
 
   run_pytest:
     name: HiCT Library autotests

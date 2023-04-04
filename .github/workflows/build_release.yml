@@ -78,7 +78,7 @@ jobs:
       run: pip install -r requirements.txt
     - name: Run byte-compiler
       run: python -m compileall -o 2 -r 10 -f -e . 
-      continue-on-eror: true
+      continue-on-error: true
     - name: Build HiCT_Library wheel
       run: python setup.py bdist_wheel
     - name: Upload wheel artifact
@@ -141,7 +141,7 @@ jobs:
         pip install -r requirements.txt
     - name: Run byte-compiler
       run: python -m compileall -o 2 -r 10 -f -e . 
-      continue-on-eror: true
+      continue-on-error: true
     - name: Build ${{ matrix.tool_name }} wheel
       run: |
         cd "${{ matrix.tool_submodule }}"
@@ -212,7 +212,7 @@ jobs:
         pip install -r requirements.txt
     - name: Run byte-compiler
       run: python -m compileall -o 2 -r 10 -f -e . 
-      continue-on-eror: true
+      continue-on-error: true
     - name: Build ${{ matrix.tool_name }} wheel
       run: |
         cd "${{ matrix.tool_submodule }}"

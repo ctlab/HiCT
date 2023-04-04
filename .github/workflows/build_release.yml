@@ -315,6 +315,7 @@ jobs:
 
   docker-full:
     runs-on: "ubuntu-latest"
+    needs: [ "build_hict_library" ]
     continue-on-error: true
     permissions:
       contents: read

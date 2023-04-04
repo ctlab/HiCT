@@ -3,18 +3,20 @@ version: "3.9"
 services:
   HiCT_Server:
     container_name: HiCT_Server
-    image: ghcr.io/ctlab/HiCT_Server:latest
+    image: squirrelfolding/hict-server:latest
+    pull_policy: always
     restart: always
     ports:
       - "5000:5000"
     volumes:
       - type: bind
-      - source: ~/HiCT/HiCT_Server/data
-      - target: /app/data
+        source: ~/HiCT/HiCT_Server/data
+        target: /app/data
 
   HiCT_WebUI:
     container_name: HiCT_WebUI
-    image: ghcr.io/ctlab/HiCT_WebUI:latest
+    image: squirrelfolding/hict-webui:latest
+    pull_policy: always
     restart: always
     ports:
       - "8080:3000"

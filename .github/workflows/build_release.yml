@@ -84,7 +84,7 @@ jobs:
     - name: Upload wheel artifact
       uses: actions/upload-artifact@v3
       with:
-        name: hict_library_wheel
+        name: HiCT_Library_wheel
         path: |
           **/dist/**/*.whl  
   
@@ -129,7 +129,7 @@ jobs:
     - name: Load built HiCT_Library
       uses: actions/download-artifact@v3
       with:
-        name: hict_library_wheel
+        name: HiCT_Library_wheel
         path: ./artifacts/
     - name: Install previously built HiCT library
       run: |
@@ -195,12 +195,12 @@ jobs:
     - name: Load built HiCT_Library
       uses: actions/download-artifact@v3
       with:
-        name: hict_library_wheel
+        name: HiCT_Library_wheel
         path: ./artifacts/
     - name: Load built HiCT_Utils
       uses: actions/download-artifact@v3
       with:
-        name: hict_utils_wheel
+        name: HiCT_Utils_wheel
         path: ./artifacts/
     - name: Install previously built HiCT library and HiCT Utils
       run: |
@@ -288,7 +288,7 @@ jobs:
       - name: Load built HiCT_Library
         uses: actions/download-artifact@v3
         with:
-          name: hict_library_wheel
+          name: HiCT_Library_wheel
           path: ./build-context/
       - name: Create directory for build context
         run: mkdir -p ./build-context/docker/
@@ -415,26 +415,31 @@ jobs:
       - name: Create directory for build context
         run: |
           mkdir -p ./build-context/docker/
-          mkdir -p ./build-context/HiCT_WebUI/dist
-          mkdir -p ./build-context/HiCT_Library/dist
+          mkdir -p ./build-context/dist/
+          mkdir -p ./build-context/dist/webui
         continue-on-error: true
       - name: Copy HiCT_WebUI to build context
-        run: cp -rf ./HiCT_WebUI/dist ./build-context/HiCT_WebUI/dist
+        run: cp -rf ./HiCT_WebUI/dist ./build-context/dist/webui
       - name: Load built HiCT_Library
         uses: actions/download-artifact@v3
         with:
-          name: hict_library_wheel
+          name: HiCT_Library_wheel
           path: ./build-context/
       - name: Load built HiCT_Utils
         uses: actions/download-artifact@v3
         with:
-          name: hict_utils_wheel
+          name: HiCT_Utils_wheel
+          path: ./build-context/
+      - name: Load built HiCT_Server
+        uses: actions/download-artifact@v3
+        with:
+          name: HiCT_Server_wheel
           path: ./build-context/
       - name: Move all wheels to the build context directly
-        run: find ./build-context/ -type f -name "*.whl" -print0 | xargs -0 mv -t ./build-context/HiCT_Library/dist/
+        run: find ./build-context/ -type f -name "*.whl" -print0 | xargs -0 mv -t ./build-context/dist/
         continue-on-error: true
-      - name: Copy HiCT_Server to build context
-        run: cp -rf ./HiCT_Server/ ./build-context/
+      # - name: Copy HiCT_Server to build context
+      #   run: cp -rf ./HiCT_Server/ ./build-context/
       - name: Copy Dockerfile to build directory
         run: cp -rf ./docker/full.Dockerfile ./build-context/docker/full.Dockerfile
       - name: Copy NGINX config
@@ -492,7 +497,7 @@ jobs:
         uses: actions/download-artifact@v3
         continue-on-error: true
         with:
-          name: hict_library_wheel
+          name: HiCT_Library_wheel
       - name: Download HiCT_Server release
         uses: actions/download-artifact@v3
         continue-on-error: true

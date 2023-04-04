@@ -2,9 +2,10 @@ FROM tiangolo/uwsgi-nginx-flask:python3.10 as base
 ENV UWSGI_CHEAPER=
 ENV UWSGI_PROCESSES=1
 WORKDIR /app
-COPY HiCT_Library/dist/*.whl .
-COPY HiCT_Server/ .
-COPY HiCT_WebUI/dist/* /app/static/
+COPY dist/*.whl .
+# COPY HiCT_Library/dist/*.whl .
+# COPY HiCT_Server/ .
+COPY dist/webui/* /app/static/
 RUN find -type f -name "*.whl" | xargs -n 1 pip install --upgrade --no-cache-dir
 RUN find -type f -name "*.whl" | xargs -n 1 rm -f 
 RUN ls -alRh

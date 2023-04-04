@@ -235,7 +235,7 @@ jobs:
       - name: Build and publish a Docker image for HiCT_Server to ghcr.io
         uses: macbre/push-to-ghcr@master
         with:
-          image_name: "$ctlab/hict-server"
+          image_name: "ctlab/hict-server"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           image_tag: latest
           context: ./build-context/
@@ -315,6 +315,7 @@ jobs:
 
   docker-full:
     runs-on: "ubuntu-latest"
+    needs: [ "build_hict_library" ]
     continue-on-error: true
     permissions:
       contents: read
@@ -339,9 +340,20 @@ jobs:
         run: |
           mkdir -p ./build-context/docker/
           mkdir -p ./build-context/HiCT_WebUI/dist
+          mkdir -p ./build-context/HiCT_Library/dist
         continue-on-error: true
       - name: Copy HiCT_WebUI to build context
         run: cp -rf ./HiCT_WebUI/dist ./build-context/HiCT_WebUI/dist
+      - name: Load built HiCT_Library
+        uses: actions/download-artifact@v3
+        with:
+          name: hict_library_wheel
+          path: ./build-context/
+      - name: Move all wheels to the build context directly
+        run: find ./build-context/ -type f -name "*.whl" -print0 | xargs -0 mv -t ./build-context/HiCT_Library/dist/
+        continue-on-error: true
+      - name: Copy HiCT_Server to build context
+        run: cp -rf ./HiCT_Server/ ./build-context/
       - name: Copy Dockerfile to build directory
         run: cp -rf ./docker/full.Dockerfile ./build-context/docker/full.Dockerfile
       - name: Copy NGINX config

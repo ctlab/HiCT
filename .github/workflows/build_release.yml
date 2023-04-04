@@ -288,7 +288,7 @@ jobs:
           submodules: recursive   
       - name: Extract branch name
         shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed 's/.*\///')" >>$GITHUB_OUTPUT
         id: extract_branch 
       - name: Load built HiCT_Library
         uses: actions/download-artifact@v3
@@ -353,7 +353,7 @@ jobs:
           submodules: recursive
       - name: Extract branch name
         shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed 's/.*\///')" >>$GITHUB_OUTPUT
         id: extract_branch
       - name: Create directory for build context
         run: mkdir -p ./build-context/docker/
@@ -413,7 +413,7 @@ jobs:
           submodules: recursive
       - name: Extract branch name
         shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed 's/.*\///')" >>$GITHUB_OUTPUT
         id: extract_branch
       - name: Setup Node.js
         uses: actions/setup-node@master

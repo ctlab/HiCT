@@ -10,6 +10,27 @@ on:
 
 jobs:
 
+  extract_branch_name:
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Extract branch name
+        shell: bash
+        run: |
+          cd HiCT
+          BRANCHNAME=$(git branch --show-current | sed 's/.*\///')
+          echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
+          echo "Branch name is ${BRANCHNAME}"
+          cd ..
+        id: extract_branch
+
   run_pytest:
     name: HiCT Library autotests
     continue-on-error: true

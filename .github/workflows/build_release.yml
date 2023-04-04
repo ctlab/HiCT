@@ -351,6 +351,7 @@ jobs:
           path: ./build-context/
       - name: Move all wheels to the build context directly
         run: find ./build-context/ -type f -name "*.whl" -print0 | xargs -0 mv -t ./build-context/HiCT_Library/dist/
+        continue-on-error: true
       - name: Copy HiCT_Server to build context
         run: cp -rf ./HiCT_Server/ ./build-context/
       - name: Copy Dockerfile to build directory

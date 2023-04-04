@@ -154,7 +154,7 @@ jobs:
           ./${{ matrix.tool_submodule }}/**/dist/**/*.whl
 
 
-build_hict_server:
+  build_hict_server:
     name: Build HiCT-based python tools (${{ matrix.tool_name }})
     needs: [ "build_hict_tools" ]
     continue-on-error: true

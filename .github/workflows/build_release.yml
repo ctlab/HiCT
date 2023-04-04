@@ -289,7 +289,7 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: |
-          BRANCHNAME=$(git symbolic-ref --short HEAD) | sed 's/.*\///'
+          BRANCHNAME=$(git branch --show-current | sed 's/.*\///')
           echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
           echo "Branch name is ${BRANCHNAME}"
         id: extract_branch 
@@ -357,7 +357,7 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: |
-          BRANCHNAME=$(git symbolic-ref --short HEAD) | sed 's/.*\///'
+          BRANCHNAME=$(git branch --show-current | sed 's/.*\///')
           echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
           echo "Branch name is ${BRANCHNAME}"
         id: extract_branch
@@ -420,7 +420,7 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: |
-          BRANCHNAME=$(git symbolic-ref --short HEAD) | sed 's/.*\///'
+          BRANCHNAME=$(git branch --show-current | sed 's/.*\///')
           echo "branch=${BRANCHNAME}" >>$GITHUB_OUTPUT
           echo "Branch name is ${BRANCHNAME}"
         id: extract_branch

@@ -14,3 +14,6 @@
 	path = HiCT_Utils
 	url = git@github.com:ctlab/HiCT_Utils.git
 	branch = master
+[submodule "HiCT_JVM"]
+	path = HiCT_JVM
+	url = https://github.com/ctlab/HiCT_JVM.git
